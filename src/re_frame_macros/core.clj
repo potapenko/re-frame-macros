@@ -1,4 +1,4 @@
-(ns re-frame-macros.macros)
+(ns re-frame-macros.core)
 
 (defmacro ...
   "A macro that turns a list of variables into a map"
@@ -107,15 +107,15 @@
     (fn [db# [_]]
       (assoc-in db# ~path ~default-value))))
 
-(defmacro reg-event-fx-debug [name]
+(defmacro reg-event-fx-debug [name message]
   `(re-frame.core/reg-event-fx
     ~name
     (fn [db# [_ result#]]
-      (taoensso.timbre/debug ~name result#))))
+      (taoensso.timbre/debug ~name ~message result#))))
 
-(defmacro reg-event-fx-info [name]
+(defmacro reg-event-fx-info [name message]
   `(re-frame.core/reg-event-fx
     ~name
     (fn [db# [_ result#]]
-      (taoensso.timbre/info ~name result#))))
+      (taoensso.timbre/info ~name ~message result#))))
 

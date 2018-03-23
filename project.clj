@@ -1,4 +1,4 @@
-(defproject re-frame-macros "0.1.0-SNAPSHOT"
+(defproject re-frame-macros "0.1.2-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -22,14 +22,14 @@
                 ;; The presence of a :figwheel configuration here
                 ;; will cause figwheel to inject the figwheel client
                 ;; into your build
-                :figwheel {:on-jsload "re-frame-macros.core/on-js-reload"
+                :figwheel {:on-jsload "re-frame-macros.main/on-js-reload"
                            ;; :open-urls will pop open your application
                            ;; in the default browser once Figwheel has
                            ;; started and compiled your application.
                            ;; Comment this out once it no longer serves you.
                            :open-urls ["http://localhost:3449/index.html"]}
 
-                :compiler {:main re-frame-macros.core
+                :compiler {:main re-frame-macros.main
                            :asset-path "js/compiled/out"
                            :output-to "resources/public/js/compiled/re_frame_macros.js"
                            :output-dir "resources/public/js/compiled/out"
@@ -43,7 +43,7 @@
                {:id "min"
                 :source-paths ["src"]
                 :compiler {:output-to "resources/public/js/compiled/re_frame_macros.js"
-                           :main re-frame-macros.core
+                           :main re-frame-macros.main
                            :optimizations :advanced
                            :pretty-print false}}]}
 
