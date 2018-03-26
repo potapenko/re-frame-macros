@@ -107,8 +107,8 @@
     (fn [db# [_]]
       (assoc-in db# ~path ~default-value))))
 
-(defmacro reg-event-fx-debug [name message]
-  `(re-frame.core/reg-event-fx
+(defmacro reg-event-debug [name message]
+  `(re-frame.core/reg-event-db
     ~name
     (fn [db# [_ result#]]
       (taoensso.timbre/debug ~name ~message result#))))
