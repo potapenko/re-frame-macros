@@ -112,12 +112,12 @@
     ~name
     (fn [db# [_ result#]]
       (taoensso.timbre/debug ~name ~message result#)
-      db)))
+      db#)))
 
 (defmacro reg-event-info [name message]
   `(re-frame.core/reg-event-db
     ~name
     (fn [db# [_ result#]]
       (taoensso.timbre/info ~name ~message result#)
-      db)))
+      db#)))
 
