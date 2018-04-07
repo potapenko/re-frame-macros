@@ -1,4 +1,4 @@
-(defproject re-frame-macros "0.1.8-SNAPSHOT"
+(defproject re-frame-macros "0.1.9-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"

@@ -121,3 +121,15 @@
       (taoensso.timbre/info ~name ~message result#)
       nil)))
 
+(defmacro let-sub [bindings & body]
+  (if-not (empty? bindings)
+    `(let [~(first bindings) @(re-frame.core/subscribe ~(keyword (name (first bindings))))]
+       (let-sub ~(vec (rest bindings)) ~@body))
+    ~@body))
+
+(defmacro let-sub-ns [ns bindings & body]
+  (if-not (empty? bindings)
+    `(let [~(first bindings) @(re-frame.core/subscribe ~(keyword ns (name (first bindings))))]
+       (let-sub ~(vec (rest bindings) ~@body)))
+    ~@body))
+
