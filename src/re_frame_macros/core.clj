@@ -122,14 +122,10 @@
       nil)))
 
 (defmacro let-sub [bindings & body]
-  (if-not (empty? bindings)
-    `(let [~(first bindings) @(re-frame.core/subscribe ~(keyword (name (first bindings))))]
-       (let-sub ~(vec (rest bindings)) ~@body))
-    ~@body))
-
-(defmacro let-sub-ns [ns bindings & body]
-  (if-not (empty? bindings)
-    `(let [~(first bindings) @(re-frame.core/subscribe ~(keyword ns (name (first bindings))))]
-       (let-sub ~(vec (rest bindings) ~@body)))
-    ~@body))
+  (cond
+    (empty? bindings)          `(do ~@body)
+    (symbol? (first bindings)) `(let [~(first bindings) (re-frame.core/subscribe [~(second bindings)])]
+                                  (let-sub ~(vec (drop 2 bindings)) ~@body))
+    :else                      `(let [~(symbol (name (first bindings))) (re-frame.core/subscribe [~(first bindings)])]
+                                  (let-sub ~(vec (rest bindings)) ~@body))))
 
