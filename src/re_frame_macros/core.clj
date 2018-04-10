@@ -123,9 +123,12 @@
 
 (defmacro let-sub [bindings & body]
   (cond
-    (empty? bindings)          `(do ~@body)
-    (symbol? (first bindings)) `(let [~(first bindings) (re-frame.core/subscribe [~(second bindings)])]
-                                  (let-sub ~(vec (drop 2 bindings)) ~@body))
-    :else                      `(let [~(symbol (name (first bindings))) (re-frame.core/subscribe [~(first bindings)])]
-                                  (let-sub ~(vec (rest bindings)) ~@body))))
+    (empty? bindings)                  `(do ~@body)
+    (and (symbol? (first bindings))
+         (keyword? (second bindings))) `(let [~(first bindings) (re-frame.core/subscribe [~(second bindings)])]
+                                          (let-sub ~(vec (drop 2 bindings)) ~@body))
+    (symbol? (first bindings))         `(let [~(first bindings) ~(second bindings)]
+                                          (let-sub ~(vec (drop 2 bindings)) ~@body))
+    :else                              `(let [~(symbol (name (first bindings))) (re-frame.core/subscribe [~(first bindings)])]
+                                          (let-sub ~(vec (rest bindings)) ~@body))))
 
