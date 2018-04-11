@@ -1,4 +1,4 @@
-(defproject re-frame-macros "0.1.11-SNAPSHOT"
+(defproject re-frame-macros "0.1.12-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -7,9 +7,7 @@
   :min-lein-version "2.7.1"
 
   :dependencies [[org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.946"]
-                 [org.clojure/core.async  "0.4.474"]
-                 [com.taoensso/timbre "4.10.0"]]
+                 [org.clojure/clojurescript "1.9.946"]]
 
   :plugins [[lein-figwheel "0.5.15"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
