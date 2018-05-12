@@ -95,6 +95,12 @@
     (fn [db# [_ value#]]
       (assoc db# ~name value#))))
 
+(defmacro reg-event-update [name func]
+  `(re-frame.core/reg-event-db
+    ~name
+    (fn [db# [_]]
+      (update db# ~name func))))
+
 (defmacro reg-event-in [name path]
   `(re-frame.core/reg-event-db
     ~name
