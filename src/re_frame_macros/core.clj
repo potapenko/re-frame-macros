@@ -99,7 +99,7 @@
   `(re-frame.core/reg-event-db
     ~name
     (fn [db# [_]]
-      (update db# ~name func))))
+      (update db# ~name ~func))))
 
 (defmacro reg-event-in [name path]
   `(re-frame.core/reg-event-db
