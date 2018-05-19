@@ -129,6 +129,23 @@
       (taoensso.timbre/info ~name ~message result#)
       nil)))
 
+(defmacro md-reg-sub-event [middlewares name default-value]
+  `(do
+     (re-frame.core/reg-event-db
+      ~name ~middlewares
+      (fn [db# [_ value#]]
+        (assoc db# ~name value#)))
+     (re-frame.core/reg-sub
+      ~name
+      (fn [db# [_]]
+        (get db# ~name ~default-value)))))
+
+(defmacro md-reg-sub [middlewares name default-value]
+  `(re-frame.core/reg-sub
+    ~name ~middlewares
+    (fn [db# [_]]
+      (get db# ~name ~default-value))))
+
 (defmacro let-sub [bindings & body]
   (cond
     (empty? bindings)                  `(do ~@body)
