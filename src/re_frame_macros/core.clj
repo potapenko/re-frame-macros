@@ -169,7 +169,7 @@
 
 ;; -- with domains
 
-(defmacro d-reg-sub-event [name domain default-value]
+(defmacro d-reg-sub-event [name domain-key default-value]
   `(do
      (re-frame.core/reg-event-db
       ~name
