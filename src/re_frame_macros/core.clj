@@ -192,7 +192,7 @@
    (fn [db# [_ value#]]
      (assoc-in [db# ~domain-key] ~name value#))))
 
-(defmacro reg-event-in-reset [name domain path default-value]
+(defmacro d-reg-event-in-reset [name domain path default-value]
   `(re-frame.core/reg-event-db
     ~name
     (fn [db# [_]]
