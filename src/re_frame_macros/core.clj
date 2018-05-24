@@ -1,5 +1,7 @@
 (ns re-frame-macros.core)
 
+;; -- debug macros
+
 (defmacro ...
   "A macro that turns a list of variables into a map"
   [& vars]
@@ -36,6 +38,8 @@
      (prn '~f (str "Elapsed time: " (/ (double (- (-> (js/Date.) .getTime) start#)) 1000000.0) " msecs"))
      ret#))
 
+;; -- re-frame macros
+
 (defmacro reg-sub-event [name default-value]
   `(do
      (re-frame.core/reg-event-db
@@ -52,6 +56,12 @@
     ~name
     (fn [db# [_]]
       (get db# ~name ~default-value))))
+
+(defmacro reg-event [name]
+  `(re-frame.core/reg-event-db
+    ~name
+    (fn [db# [_ value#]]
+      (assoc db# ~name value#))))
 
 (defmacro reg-sub-in [name path default-value]
   `(re-frame.core/reg-sub
@@ -89,19 +99,28 @@
       (= (get-in db# ~path)
          ~test-value))))
 
-(defmacro reg-event [name]
-  `(re-frame.core/reg-event-db
-    ~name
-    (fn [db# [_ value#]]
-      (assoc db# ~name value#))))
-
-(defmacro reg-event-update [name value func]
+(defmacro reg-event-update [name first-value func]
   `(re-frame.core/reg-event-db
     ~name
     (fn [db# [_]]
       (if (contains? db# ~name)
         (update db# ~name ~func)
-        (assoc db# ~name ~value)))))
+        (assoc db# ~name ~first-value)))))
+
+(defn- constains-in? [m path]
+  (loop [[v & t] path]
+    (if (and v (contains? m v))
+      (recur t)
+      false)))
+
+(defmacro reg-event-in-update [name path first-value func]
+  `(re-frame.core/reg-event-db
+   ~name
+   (fn [db# [_]]
+     (let [path# (concat [db#] ~path)]
+       (if (contains-in? db# path#)
+         (update-in path# ~name ~func)
+         (assoc-in db# path# ~first-value))))))
 
 (defmacro reg-event-in [name path]
   `(re-frame.core/reg-event-db
@@ -120,14 +139,16 @@
     ~name
     (fn [db# [_ result#]]
       (taoensso.timbre/debug ~name ~message result#)
-      nil)))
+      {})))
 
 (defmacro reg-event-info [name message]
   `(re-frame.core/reg-event-fx
     ~name
     (fn [db# [_ result#]]
       (taoensso.timbre/info ~name ~message result#)
-      nil)))
+      {})))
+
+;; -- with middlewares
 
 (defmacro md-reg-sub-event [middlewares name default-value]
   `(do
@@ -140,11 +161,41 @@
       (fn [db# [_]]
         (get db# ~name ~default-value)))))
 
-(defmacro md-reg-sub [middlewares name default-value]
-  `(re-frame.core/reg-sub
+(defmacro md-reg-event [name middlewares]
+  `(re-frame.core/reg-event-db
     ~name ~middlewares
+    (fn [db# [_ value#]]
+      (assoc db# ~name value#))))
+
+;; -- with domains
+
+(defmacro d-reg-sub-event [name domain default-value]
+  `(do
+     (re-frame.core/reg-event-db
+      ~name
+      (fn [db# [_ value#]]
+        (assoc-in [db# ~domain] ~name value#)))
+     (re-frame.core/reg-sub
+      ~name :<- [~domain-key]
+      (fn [domain# [_]]
+        (get domain# ~name ~default-value)))))
+
+(defmacro d-reg-sub [name domain-key default-value]
+  `(re-frame.core/reg-sub
+    ~name :<- [~domain-key]
+    (fn [domain# [_]]
+      (get domain# ~name ~default-value))))
+
+(defmacro d-reg-event-update [name domain init-value func]
+  `(re-frame.core/reg-event-db
+    ~name :<- [~domain-key]
     (fn [db# [_]]
-      (get db# ~name ~default-value))))
+      (let [path# [db# ~domain]]
+       (if (contains-in? db# path#)
+         (update-in path# ~name ~func)
+         (assoc-in db# path# ~init-value))))))
+
+;; -- utilites
 
 (defmacro let-sub [bindings & body]
   (cond
