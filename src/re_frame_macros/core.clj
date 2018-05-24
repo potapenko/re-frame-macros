@@ -186,6 +186,18 @@
     (fn [domain# [_]]
       (get domain# ~name ~default-value))))
 
+(defmacro d-reg-event [name domain-key]
+  `(re-frame.core/reg-event-db
+   ~name
+   (fn [db# [_ value#]]
+     (assoc-in [db# ~domain-key] ~name value#))))
+
+(defmacro reg-event-in-reset [name domain path default-value]
+  `(re-frame.core/reg-event-db
+    ~name
+    (fn [db# [_]]
+      (assoc-in db# (concat [~domain] ~path) ~default-value))))
+
 (defmacro d-reg-event-update [name domain-key init-value func]
   `(re-frame.core/reg-event-db
     ~name :<- [~domain-key]
