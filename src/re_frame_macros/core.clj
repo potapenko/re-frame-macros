@@ -186,11 +186,11 @@
     (fn [domain# [_]]
       (get domain# ~name ~default-value))))
 
-(defmacro d-reg-event-update [name domain init-value func]
+(defmacro d-reg-event-update [name domain-key init-value func]
   `(re-frame.core/reg-event-db
     ~name :<- [~domain-key]
     (fn [db# [_]]
-      (let [path# [db# ~domain]]
+      (let [path# [db# ~domain-key]]
        (if (contains-in? db# path#)
          (update-in path# ~name ~func)
          (assoc-in db# path# ~init-value))))))
