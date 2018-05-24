@@ -174,7 +174,7 @@
      (re-frame.core/reg-event-db
       ~name
       (fn [db# [_ value#]]
-        (assoc-in [db# ~domain] ~name value#)))
+        (assoc-in [db# ~domain-key] ~name value#)))
      (re-frame.core/reg-sub
       ~name :<- [~domain-key]
       (fn [domain# [_]]
