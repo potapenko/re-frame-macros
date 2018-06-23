@@ -167,46 +167,6 @@
     (fn [db# [_ value#]]
       (assoc db# ~name value#))))
 
-;; -- with domains
-
-(defmacro d-reg-sub-event [name domain-key default-value]
-  `(do
-     (re-frame.core/reg-event-db
-      ~name
-      (fn [db# [_ value#]]
-        (assoc-in [db# ~domain-key] ~name value#)))
-     (re-frame.core/reg-sub
-      ~name :<- [~domain-key]
-      (fn [domain# [_]]
-        (get domain# ~name ~default-value)))))
-
-(defmacro d-reg-sub [name domain-key default-value]
-  `(re-frame.core/reg-sub
-    ~name :<- [~domain-key]
-    (fn [domain# [_]]
-      (get domain# ~name ~default-value))))
-
-(defmacro d-reg-event [name domain-key]
-  `(re-frame.core/reg-event-db
-   ~name
-   (fn [db# [_ value#]]
-     (assoc-in [db# ~domain-key] ~name value#))))
-
-(defmacro d-reg-event-in-reset [name domain path default-value]
-  `(re-frame.core/reg-event-db
-    ~name
-    (fn [db# [_]]
-      (assoc-in db# (concat [~domain] ~path) ~default-value))))
-
-(defmacro d-reg-event-update [name domain-key init-value func]
-  `(re-frame.core/reg-event-db
-    ~name :<- [~domain-key]
-    (fn [db# [_]]
-      (let [path# [db# ~domain-key]]
-       (if (contains-in? db# path#)
-         (update-in path# ~name ~func)
-         (assoc-in db# path# ~init-value))))))
-
 ;; -- utilites
 
 (defmacro let-sub [bindings & body]
